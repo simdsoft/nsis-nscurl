@@ -1,15 +1,20 @@
 @echo off
 SetLocal
 
-set Z7=%PROGRAMFILES%\7-Zip\7z.exe
-if not exist "%Z7%" echo ERROR: Missing "%Z7%" && pause && exit /B 2
+where 7z
+if %errorlevel%==0 (
+    set Z7=7z.exe
+) else (
+    set Z7=%PROGRAMFILES%\7-Zip\7z.exe
+    if not exist "%Z7%" echo ERROR: Missing "%Z7%" && pause && exit /B 2
+)
 
 curl.exe -V > NUL 2> NUL
 if %errorlevel% neq 0 echo ERROR: Missing curl.exe && pause && exit /B 2
 
 set dn=%~dp0\libcurl-devel
-set fn=%~dp0\libcurl-devel-negrutiu.7z
-set url=https://github.com/negrutiu/libcurl-devel/releases/latest/download/libcurl-devel-negrutiu.7z
+set fn=%~dp0\libcurl-devel-simdsoft.7z
+set url=https://github.com/simdsoft/libcurl-devel/releases/latest/download/libcurl-devel-simdsoft.7z
 
 echo Downloading %url% ...
 for /f "" %%h in ('curl.exe -L -z "%fn%" -o "%fn%" -w "%%{response_code}" %url% 2^> NUL') do set httpstatus=%%h

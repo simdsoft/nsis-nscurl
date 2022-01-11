@@ -4,9 +4,7 @@
 
 #pragma once
 #include "utils.h"
-
-#define NO_ADDITIONAL_CERT_LIST 1
-#define NO_HASH_EXPORTS 1
+#include "config.h"
 
 #if !defined(NO_HASH_EXPORTS)
 //++ Hash

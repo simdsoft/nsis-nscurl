@@ -1,6 +1,8 @@
 @echo off
 SetLocal
 
+set PATH=%~dp0libcurl-devel\MSVC-curl_minimal-Release-Win32\bin;%PATH%
+
 curl.exe -V > NUL 2> NUL
 if %errorlevel% neq 0 echo ERROR: Missing curl.exe && pause && exit /B 2
 

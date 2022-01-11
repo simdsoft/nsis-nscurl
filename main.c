@@ -192,6 +192,7 @@ void __cdecl sha256( HWND parent, int string_size, TCHAR *variables, stack_t **s
 }
 #endif
 
+#if !defined(NO_COMPAT)
 //++ [exported] echo [param1]..[paramN]
 EXTERN_C __declspec(dllexport)
 void __cdecl echo( HWND parent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra )
@@ -224,10 +225,15 @@ void __cdecl echo( HWND parent, int string_size, TCHAR *variables, stack_t **sta
 	MyFree( psz );
 	MyFree( psz2 );
 }
+#endif
 
 //++ [exported] http <parameters> /END
 EXTERN_C __declspec(dllexport)
+#if defined(NO_COMPAT)
+void __cdecl perform( HWND parent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra )
+#else
 void __cdecl http( HWND parent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra )
+#endif
 {
 	LPTSTR psz = NULL;
 	PCURL_REQUEST pReq = NULL;
@@ -305,7 +311,7 @@ void __cdecl http( HWND parent, int string_size, TCHAR *variables, stack_t **sta
 	MyFree( psz );
 }
 
-
+#if !defined(NO_MISC)
 //++ [exported] wait [/ID id] [/TAG tag] parameters /END
 EXTERN_C __declspec(dllexport)
 void __cdecl wait( HWND parent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra )
@@ -580,7 +586,7 @@ void __cdecl unescape( HWND parent, int string_size, TCHAR *variables, stack_t *
 
 	MyFree( psz );
 }
-
+#endif
 
 //++ DllMain
 EXTERN_C

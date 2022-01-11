@@ -227,9 +227,9 @@ static int _base64Decode(const unsigned char* input, unsigned int input_len, uns
     int c = 0, char_count, errors = 0;
     unsigned int input_idx = 0;
     unsigned int output_idx = 0;
-    int bits = 0;
+    int bits = 0, i = 0;
 
-    for (int i = 0; i < alphabet_len; i++)
+    for (; i < alphabet_len; ++i)
     {
         inalphabet[alphabet[i]] = 1;
         decoder[alphabet[i]] = i;

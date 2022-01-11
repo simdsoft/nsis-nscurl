@@ -543,20 +543,23 @@ LONG MyReplaceMem(
 	_Inout_ PVOID pReplace, _In_ ULONG iReplaceSize,
 	_In_ LPCVOID pWith, _In_ ULONG iWithSize )
 {
+	LONG iMoveSize;
+	ULONG iCopySize;
+
 	assert( pBuf );
 	assert( iBufSize <= iBufMaxSize );
 	assert( (PCH)pReplace >= (PCH)pBuf && (PCH)pReplace < (PCH)pBuf + iBufSize );
-
+	
 	/// Recompute sizes relative to pReplace
 	iBufSize    -= (ULONG)((PCCH)pReplace - (PCCH)pBuf);
 	iBufMaxSize -= (ULONG)((PCCH)pReplace - (PCCH)pBuf);
 
-	LONG iMoveSize = (LONG)(iBufSize - iReplaceSize);
+	iMoveSize = (iBufSize - iReplaceSize);
 	iMoveSize = __min( iMoveSize, (LONG)(iBufMaxSize - iWithSize) );
 	iMoveSize = __max( iMoveSize, 0 );
 	MoveMemory( (PCH)pReplace + iWithSize, (PCH)pReplace + iReplaceSize, iMoveSize );
 
-	ULONG iCopySize = __min( iWithSize, iBufMaxSize );
+	iCopySize = __min( iWithSize, iBufMaxSize );
 	CopyMemory( pReplace, pWith, iCopySize );
 
 	return (LONG)(iCopySize + iMoveSize - iBufSize);
@@ -808,13 +811,14 @@ ULONG VirtualMemoryInitialize( _Inout_ VMEMO *pMem, _In_ SIZE_T iMaxSize )
 SIZE_T VirtualMemoryAppend( _Inout_ VMEMO *pMem, _In_ PVOID buf, _In_ SIZE_T size )
 {
 	ULONG e = ERROR_SUCCESS;
+	SIZE_T n;
 	if (pMem && pMem->pMem && buf && size) {
 
 		/// Commit more virtual memory as needed
 		if (pMem->iSize + size > pMem->iCommitted) {
 			SYSTEM_INFO si;
 			GetSystemInfo( &si );
-			SIZE_T n = ((size + si.dwPageSize) / si.dwPageSize) * si.dwPageSize;
+			n = ((size + si.dwPageSize) / si.dwPageSize) * si.dwPageSize;
 			pMem->iCommitted = __min( pMem->iCommitted + n, pMem->iReserved );
 			e = VirtualAlloc( (LPVOID)pMem->pMem, pMem->iCommitted, MEM_COMMIT, PAGE_READWRITE ) ? ERROR_SUCCESS : GetLastError();
 		}

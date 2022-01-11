@@ -820,8 +820,9 @@ int CurlDebugCallback( CURL *handle, curl_infotype type, char *data, size_t size
 			const size_t iMaxLen = 1024 * 128;
 			const size_t iLineLen = 512;
 			LPSTR pszLine;
+			size_t iOutLen;
 			if ((pszLine = (LPSTR)malloc( iLineLen )) != NULL) {
-				for (size_t iOutLen = 0; iOutLen < iMaxLen; ) {
+				for (iOutLen = 0; iOutLen < iMaxLen; ) {
 					size_t i, n = __min( iLineLen, size - iOutLen );
 					if (n == 0)
 						break;
