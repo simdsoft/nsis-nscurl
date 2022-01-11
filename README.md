@@ -4,9 +4,9 @@ It's implemented on top of [libcurl](https://curl.haxx.se/libcurl/) with [OpenSS
 This plugin is included in my unofficial [NSIS builds](https://github.com/negrutiu/nsis).<br>
 
 [![License: BSD3](https://img.shields.io/badge/License-BSD3-blue.svg)](LICENSE.md)
-[![Latest Release](https://img.shields.io/badge/dynamic/json.svg?label=Latest%20Release&url=https%3A%2F%2Fapi.github.com%2Frepos%2Fnegrutiu%2Fnsis-nscurl%2Freleases%2Flatest&query=%24.name&colorB=orange)](../../releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/negrutiu/nsis-nscurl/total.svg?label=Downloads&colorB=orange)](../../releases/latest)
-[![GitHub issues](https://img.shields.io/github/issues/negrutiu/nsis-nscurl.svg?label=Issues)](../../issues)
+[![Latest Release](https://img.shields.io/badge/dynamic/json.svg?label=Latest%20Release&url=https%3A%2F%2Fapi.github.com%2Frepos%2Fsimdsoft%2Fnsis-nscurl%2Freleases%2Flatest&query=%24.name&colorB=orange)](../../releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/simdsoft/nsis-nscurl/total.svg?label=Downloads&colorB=orange)](../../releases/latest)
+[![GitHub issues](https://img.shields.io/github/issues/simdsoft/nsis-nscurl.svg?label=Issues)](../../issues)
 
 ### Features:
 - **Modern**: supports modern SSL protocols and cyphers including HTTPS/2, TLS1.3, etc.
