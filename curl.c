@@ -590,8 +590,15 @@ size_t CurlHeaderCallback( char *buffer, size_t size, size_t nitems, void *userd
 {
 	PCURL_REQUEST pReq = (PCURL_REQUEST)userdata;
 	LPSTR psz1, psz2;
+	const char* range;
 
 	assert( pReq && pReq->Runtime.pCurl );
+
+	if (0 == _strnicmp(buffer, "Content-Range: ", 15)) { // icase starts_with
+		range = strchr(buffer + 15, '/');
+		if (range)
+			pReq->Runtime.iRangeEnd = _atoi64(++range);
+	}
 
 	//x TRACE( _T( "%hs( \"%hs\" )\n" ), __FUNCTION__, buffer );
 
@@ -1142,8 +1149,11 @@ void CurlTransfer( _In_ PCURL_REQUEST pReq )
 			}
 
 			/// Resume
-			if (pReq->Runtime.iResumeFrom > 0)
+			if (pReq->Runtime.iResumeFrom > 0) {
+                // sprintf(strFmtBuf, "%" CURL_FORMAT_CURL_OFF_T "-", pReq->Runtime.iResumeFrom);
+                // curl_easy_setopt( curl, CURLOPT_RANGE, strFmtBuf );
 				curl_easy_setopt( curl, CURLOPT_RESUME_FROM_LARGE, pReq->Runtime.iResumeFrom );
+			}
 
 			/// Callbacks
 			VirtualMemoryInitialize( &pReq->Runtime.InHeaders, DEFAULT_HEADERS_VIRTUAL_SIZE );
@@ -1219,6 +1229,11 @@ void CurlTransfer( _In_ PCURL_REQUEST pReq )
 					pReq->Error.pszCurl = MyStrDup( eA2A, *szError ? szError : curl_easy_strerror( pReq->Error.iCurl ) );
 					curl_easy_getinfo( curl, CURLINFO_RESPONSE_CODE, (PLONG)&pReq->Error.iHttp );	/// ...might not be available
 					szError[0] = 0;
+
+					if (pReq->Error.iHttp == 416) { // HTTP 416: "Requested Range Not Satisfiable"
+						if (pReq->Runtime.iResumeFrom <= pReq->Runtime.iRangeEnd)
+							pReq->Error.iHttp = 200; // Nothing needs to download
+					}
 
 					// Finished?
 					CurlRequestFormatError( pReq, NULL, 0, &bSuccess, &e );

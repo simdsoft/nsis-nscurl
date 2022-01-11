@@ -69,6 +69,7 @@ typedef struct _CURL_REQUEST {
 		curl_off_t	iDlXferred, iDlTotal;
 		curl_off_t	iUlXferred, iUlTotal;
 		curl_off_t	iSpeed;
+		curl_off_t  iRangeEnd;
 	} Runtime;
 	struct {
 		ULONG		iWin32;
