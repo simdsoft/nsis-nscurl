@@ -24,6 +24,10 @@ BOOL PluginInit( _In_ HINSTANCE hInst )
 
 		TRACE( _T( "%hs\n" ), __FUNCTION__ );
 
+#if defined(_DEBUG)
+		MessageBox(NULL, TEXT("Waiting debugger to attach..."), TEXT("Waiting debugger to attach..."), MB_OK | MB_ICONEXCLAMATION);
+#endif
+
 		g_hInst = hInst;
 		g_hTerm = CreateEvent( NULL, TRUE, FALSE, NULL );
 		assert( g_hTerm );
@@ -82,7 +86,7 @@ UINT_PTR __cdecl UnloadCallback( enum NSPIM iMessage )
 	return 0;
 }
 
-
+#if !defined(NO_HASH_EXPORTS)
 //++ [exported] md5 [(string|file|memory)] <data>
 EXTERN_C __declspec(dllexport)
 void __cdecl md5( HWND parent, int string_size, TCHAR *variables, stack_t **stacktop, extra_parameters *extra )
@@ -186,7 +190,7 @@ void __cdecl sha256( HWND parent, int string_size, TCHAR *variables, stack_t **s
 	pushstringEx( psz );
 	MyFree( psz );
 }
-
+#endif
 
 //++ [exported] echo [param1]..[paramN]
 EXTERN_C __declspec(dllexport)
@@ -220,7 +224,6 @@ void __cdecl echo( HWND parent, int string_size, TCHAR *variables, stack_t **sta
 	MyFree( psz );
 	MyFree( psz2 );
 }
-
 
 //++ [exported] http <parameters> /END
 EXTERN_C __declspec(dllexport)

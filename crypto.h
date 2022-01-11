@@ -5,7 +5,10 @@
 #pragma once
 #include "utils.h"
 
+#define NO_ADDITIONAL_CERT_LIST 1
+#define NO_HASH_EXPORTS 1
 
+#if !defined(NO_HASH_EXPORTS)
 //++ Hash
 ULONG Hash(
 	_In_ IDATA *pData,
@@ -30,6 +33,7 @@ ULONG HashMem(
 	_Out_opt_ PUCHAR sha1,					/// 20 bytes / 160 bits
 	_Out_opt_ PUCHAR sha256					/// 32 bytes / 256 bits
 );
+#endif
 
 //++ EncBase64
 //! The caller must MyFree(..) the string

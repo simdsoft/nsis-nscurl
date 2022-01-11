@@ -4,9 +4,11 @@
 
 #include "main.h"
 #include "curl.h"
-#include <openssl/ssl.h>
 #include "crypto.h"
 
+#if !defined(NO_ADDITIONAL_CERT_LIST)
+#include <openssl/ssl.h>
+#endif
 
 typedef struct {
 	volatile HMODULE		hPinnedModule;
@@ -510,7 +512,7 @@ BOOL CurlParseRequestParam( _In_ ULONG iParamIndex, _In_ LPTSTR pszParam, _In_ i
 	return bRet;
 }
 
-
+#if !defined(NO_ADDITIONAL_CERT_LIST)
 //++ OpenSSLVerifyCallback
 int OpenSSLVerifyCallback( int preverify_ok, X509_STORE_CTX *x509_ctx )
 {
@@ -572,7 +574,6 @@ int OpenSSLVerifyCallback( int preverify_ok, X509_STORE_CTX *x509_ctx )
 	}
 }
 
-
 //++ CurlSSLCallback
 //? This callback function gets called by libcurl just before the initialization of an SSL connection
 CURLcode CurlSSLCallback( CURL *curl, void *ssl_ctx, void *userptr )
@@ -582,7 +583,7 @@ CURLcode CurlSSLCallback( CURL *curl, void *ssl_ctx, void *userptr )
 	SSL_CTX_set_verify( pssl, SSL_VERIFY_PEER, OpenSSLVerifyCallback);
 	return CURLE_OK;
 }
-
+#endif
 
 //++ CurlHeaderCallback
 size_t CurlHeaderCallback( char *buffer, size_t size, size_t nitems, void *userdata )
@@ -959,7 +960,7 @@ void CurlTransfer( _In_ PCURL_REQUEST pReq )
 
 		// Transfer
 		curl = curl_easy_init();	// TODO: Cache
-		if (curl) {
+		if (curl) {	
 
 			/// Remember it
 			pReq->Runtime.pCurl = curl;
@@ -1019,12 +1020,14 @@ void CurlTransfer( _In_ PCURL_REQUEST pReq )
 				} else {
 					curl_easy_setopt( curl, CURLOPT_CAINFO, NULL );			/// No cacert.pem
 				}
+#if !defined(NO_ADDITIONAL_CERT_LIST)
 				// Additional trusted certificates
 				if (pReq->pCertList) {
 					// SSL callback
 					curl_easy_setopt( curl, CURLOPT_SSL_CTX_FUNCTION, CurlSSLCallback );
 					curl_easy_setopt( curl, CURLOPT_SSL_CTX_DATA, pReq );
 				}
+#endif
 			} else {
 				// SSL validation disabled
 				curl_easy_setopt( curl, CURLOPT_SSL_VERIFYPEER, FALSE );
