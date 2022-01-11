@@ -1230,9 +1230,9 @@ void CurlTransfer( _In_ PCURL_REQUEST pReq )
 					curl_easy_getinfo( curl, CURLINFO_RESPONSE_CODE, (PLONG)&pReq->Error.iHttp );	/// ...might not be available
 					szError[0] = 0;
 
-					if (pReq->Error.iHttp == 416) { // HTTP 416: "Requested Range Not Satisfiable"
-						if (pReq->Runtime.iResumeFrom <= pReq->Runtime.iRangeEnd)
-							pReq->Error.iHttp = 200; // Nothing needs to download
+					// HTTP 416: "Requested Range Not Satisfiable", check does the range is properly
+					if (pReq->Error.iHttp == 416 && pReq->Runtime.iResumeFrom <= pReq->Runtime.iRangeEnd) { 
+						pReq->Error.iHttp = 206; // Set response code same with iResumeFrom < iRangeEnd
 					}
 
 					// Finished?
